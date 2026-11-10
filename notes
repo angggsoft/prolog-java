@@ -1,0 +1,28 @@
+game(halo).
+
+dynamic actor/1
+
+--- Final
+assertz(game(GoW)).
+
+--- Inicio
+asserta...
+
+
+Crea un archivo de hechos y otros de reglas, tal vez otro de funciones, existen dos versiones de la base de conocimiento, una en la ram y
+podríamos guardarlo en archivos para que los datos sean persistentes y los cambios se mantengan
+
+--- Guardar
+write
+
+--- Olvidar
+retract
+write
+
+
+buscar_por_distribuidora(Distribuidora) :-
+    pelicula(Nombre, Estudio, Lanzamiento, _, _, _),
+    sub_string(Estudio, _, _, _, Distribuidora),
+    format('- -w (-w)-n', [Nombre, Lanzamiento]),
+    fail.
+buscar_por_distribuidora().l

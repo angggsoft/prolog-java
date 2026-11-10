@@ -1,0 +1,13 @@
+### Binaries & Compilation ###
+out/
+bin/
+*.class
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.ipr
+
+### OS ###
+.DS_Store
+Thumbs.db
