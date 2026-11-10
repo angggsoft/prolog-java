@@ -21,7 +21,7 @@ Proyecto que integra **SWI-Prolog** con **Java (Swing)** mediante la librería *
    - Aplica `assertz/1` en la memoria viva de Prolog y persiste los cambios automáticamente al final del archivo `dragones.pl` para conservarlos tras reiniciar la aplicación.
 
 3. **Interfaz Gráfica en Java Swing (`VentanaDragones`)**:
-   - **Panel Izquierdo**: Retrato en alta definición del dragón seleccionado con estética de *Game of Thrones: Dragonfire*, acompañado de una tarjeta de resumen con atributos, origen, bando y lista completa de sus jinetes.
+   - **Panel Izquierdo**: Retrato oficial en alta definición para los dragones pertenecientes al plantel del juego *Game of Thrones: Dragonfire*. Para aquellos dragones que no formaban parte de dicho juego originalmente (como Balerion, Meraxes, Silverwing, Dreamfyre y Caníbal), el visor muestra limpiamente un estado `[Not found]` indicando que no cuentan con modelo original en el juego. Acompañado de la ficha resumen de atributos y jinetes.
    - **Panel Superior Derecho**: Selector rápido de dragón, formulario para añadir jinetes, botones de consultas predefinidas (Los Negros, Los Verdes, Múltiples Jinetes, Salvajes, Comparador de Rivales/Aliados) y visor de resultados.
    - **Panel Inferior Derecho**: Consola interactiva estilo terminal (`?- `) con autoscroll que permite ejecutar cualquier consulta Prolog libremente, mostrando todas las soluciones resueltas (`X = ...`), respuestas booleanas (`true.` / `false.`) y menú de ejemplos rápidos.
 
@@ -32,7 +32,7 @@ Proyecto que integra **SWI-Prolog** con **Java (Swing)** mediante la librería *
 ```text
 prolog-java/
 ├── dragones.pl                   # Base de conocimiento y reglas en Prolog
-├── images/                       # Retratos oficiales y estilizados de los 17 dragones
+├── images/                       # Retratos oficiales de los dragones del juego Dragonfire
 ├── src/
 │   ├── ConsultaDragones.java     # Punto de entrada principal (GUI o CLI)
 │   ├── VentanaDragones.java      # Interfaz gráfica de usuario en Swing

@@ -2,12 +2,23 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class PanelImagenDragon extends JPanel {
+    // Conjunto de dragones del lore que no tienen imagen original en Game of Thrones: Dragonfire
+    public static final Set<String> SIN_IMAGEN_ORIGINAL = new HashSet<>(Arrays.asList(
+            "balerion",
+            "meraxes",
+            "canibal",
+            "silverwing",
+            "dreamfyre"
+    ));
+
     private String dragonActual = "";
     private DragonInfo infoActual = null;
     private final Map<String, Image> cacheImagenes = new HashMap<>();
@@ -77,8 +88,8 @@ public class PanelImagenDragon extends JPanel {
                         g2.drawImage(img, drawX, drawY, drawW, drawH, null);
                     }
                 } else {
-                    // Dibujar avatar genérico o mensaje cuando no hay imagen
-                    dibujarPlaceholder(g2, w, h);
+                    // Mostrar [Not found] para dragones sin imagen original o no encontrada
+                    dibujarNotFound(g2, w, h);
                 }
                 g2.dispose();
             }
@@ -139,8 +150,11 @@ public class PanelImagenDragon extends JPanel {
             sb.append("• Color: ").append(DragonInfo.formatearNombre(info.getColor())).append("\n");
             sb.append("• Origen: ").append(DragonInfo.formatearNombre(info.getNacidoEn())).append("\n");
             sb.append("• Salvaje: ").append(info.isSalvaje() ? "Sí" : "No").append("\n");
-            sb.append("• Total jinetes: ").append(info.getJinetes().size()).append("\n\n");
-            sb.append("Jinetes registrados:\n");
+            sb.append("• Total jinetes: ").append(info.getJinetes().size()).append("\n");
+            if (SIN_IMAGEN_ORIGINAL.contains(dragonActual)) {
+                sb.append("• Imagen: [Not found] (Sin modelo original en Dragonfire)\n");
+            }
+            sb.append("\nJinetes registrados:\n");
 
             if (info.getJinetes().isEmpty()) {
                 sb.append("   (Sin jinetes registrados)\n");
@@ -165,6 +179,12 @@ public class PanelImagenDragon extends JPanel {
 
     private Image obtenerImagen(String dragon) {
         if (dragon == null || dragon.isEmpty()) return null;
+
+        // Si pertenece a la lista de dragones sin imagen original en Dragonfire, mostrar [Not found]
+        if (SIN_IMAGEN_ORIGINAL.contains(dragon.toLowerCase())) {
+            return null;
+        }
+
         if (cacheImagenes.containsKey(dragon)) {
             return cacheImagenes.get(dragon);
         }
@@ -191,45 +211,53 @@ public class PanelImagenDragon extends JPanel {
         return null;
     }
 
-    private void dibujarPlaceholder(Graphics2D g2, int w, int h) {
-        // Fondo degradado
-        GradientPaint gp = new GradientPaint(0, 0, new Color(30, 25, 30), w, h, new Color(15, 12, 18));
+    private void dibujarNotFound(Graphics2D g2, int w, int h) {
+        // Fondo degradado oscuro
+        GradientPaint gp = new GradientPaint(0, 0, new Color(28, 28, 33), w, h, new Color(14, 14, 17));
         g2.setPaint(gp);
         g2.fillRoundRect(10, 10, w - 20, h - 20, 16, 16);
 
-        // Borde decorativo
-        g2.setColor(new Color(100, 80, 40));
-        g2.setStroke(new BasicStroke(2));
+        // Marco técnico con borde discontinuo
+        float[] dash = {6.0f, 6.0f};
+        g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f));
+        g2.setColor(new Color(85, 85, 95));
         g2.drawRoundRect(14, 14, w - 28, h - 28, 14, 14);
 
-        // Silueta / Icono
-        g2.setColor(new Color(200, 160, 60));
         int cx = w / 2;
-        int cy = h / 2 - 15;
+        int cy = h / 2 - 25;
 
-        // Círculo central
-        g2.drawOval(cx - 50, cy - 50, 100, 100);
+        // Cuadro central para el icono
+        g2.setStroke(new BasicStroke(1.5f));
+        g2.setColor(new Color(48, 48, 55));
+        g2.fillRoundRect(cx - 45, cy - 45, 90, 90, 12, 12);
+        g2.setColor(new Color(75, 75, 85));
+        g2.drawRoundRect(cx - 45, cy - 45, 90, 90, 12, 12);
 
-        // Cabeza y alas estilizadas
-        Polygon alas = new Polygon();
-        alas.addPoint(cx, cy - 35);
-        alas.addPoint(cx + 40, cy - 10);
-        alas.addPoint(cx + 25, cy + 20);
-        alas.addPoint(cx, cy + 5);
-        alas.addPoint(cx - 25, cy + 20);
-        alas.addPoint(cx - 40, cy - 10);
-        g2.fillPolygon(alas);
+        // Símbolo de interrogación / silueta
+        g2.setColor(new Color(160, 160, 175));
+        g2.setFont(new Font("Consolas", Font.BOLD, 42));
+        FontMetrics fmQ = g2.getFontMetrics();
+        g2.drawString("?", cx - fmQ.stringWidth("?") / 2, cy + 14);
 
+        // Etiqueta destacada: [Not found]
+        g2.setFont(new Font("Consolas", Font.BOLD, 20));
+        g2.setColor(new Color(240, 90, 90)); // Rojo suave / alerta legible
+        String notFound = "[Not found]";
+        FontMetrics fmNF = g2.getFontMetrics();
+        g2.drawString(notFound, cx - fmNF.stringWidth(notFound) / 2, cy + 78);
+
+        // Nombre del dragón
         g2.setFont(new Font("SansSerif", Font.BOLD, 14));
-        String txt = (dragonActual.isEmpty()) ? "Sin Selección" : DragonInfo.formatearNombre(dragonActual);
+        g2.setColor(new Color(225, 225, 230));
+        String txt = (dragonActual == null || dragonActual.isEmpty()) ? "Sin Selección" : DragonInfo.formatearNombre(dragonActual);
         FontMetrics fm = g2.getFontMetrics();
-        int tw = fm.stringWidth(txt);
-        g2.drawString(txt, cx - tw / 2, cy + 65);
+        g2.drawString(txt, cx - fm.stringWidth(txt) / 2, cy + 104);
 
+        // Subtítulo
         g2.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        g2.setColor(Color.LIGHT_GRAY);
-        String sub = "House of the Dragon";
-        int sw = g2.getFontMetrics().stringWidth(sub);
-        g2.drawString(sub, cx - sw / 2, cy + 85);
+        g2.setColor(new Color(150, 150, 160));
+        String sub = "Sin imagen original en Dragonfire";
+        FontMetrics fmSub = g2.getFontMetrics();
+        g2.drawString(sub, cx - fmSub.stringWidth(sub) / 2, cy + 124);
     }
 }
