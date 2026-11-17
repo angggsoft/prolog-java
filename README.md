@@ -1,29 +1,26 @@
-# Prolog-Java: Sistema Experto de Dragones (House of the Dragon) 🐲
+# Prolog-Java: Sistema Experto Didáctico de Dragones (HotD) 🐲
 
-Proyecto que integra **SWI-Prolog** con **Java (Swing)** mediante la librería **JPL** (Java-Prolog Interface) para implementar un sistema experto y base de conocimientos interactiva sobre los dragones del universo de *House of the Dragon* (HotD).
+Proyecto educativo que conecta **SWI-Prolog** con **Java (Swing)** mediante la librería **JPL** (Java-Prolog Interface) para explorar una base de conocimientos sobre los dragones de *House of the Dragon* (HotD) con una arquitectura simple y comentada paso a paso.
 
 ---
 
 ## 🚀 Características Principales
 
-1. **Base de Conocimiento Dinámica en Prolog (`dragones.pl`)**:
-   - Registro de dragones, colores, lugares de origen, estado salvaje y facciones (*Los Negros*, *Los Verdes*, *Conquista*).
-   - **Múltiples Jinetes**: Varios dragones históricos poseen múltiples jinetes registrados a lo largo de las distintas épocas (Vhagar, Balerion, Caraxes, Meleys, Vermithor, etc.).
-   - **Reglas de Inferencia**:
-     - Detección de múltiples jinetes (`multiples_jinetes/1`).
-     - Alianzas y rivalidades (`son_aliados/2`, `son_enemigos/2`).
-     - Dragones sin jinete y salvajes (`sin_jinete/1`, `salvaje/1`).
-     - Jinetes compartidos entre dragones (`comparten_jinete/3`).
-     - Registro dinámico en memoria (`agregar_jinete/2`).
+1. **Base de Conocimiento Didáctica y Dinámica (`dragones.pl`)**:
+   - Documentación detallada de átomos, variables, aridad, predicados dinámicos (`:- dynamic`), hechos y reglas de inferencia.
+   - **Múltiples Jinetes**: Relación 1:N para dragones con varios jinetes históricos (Vhagar, Balerion, Caraxes, Meleys, Vermithor, Silverwing, Seasmoke, Dreamfyre).
+   - **Reglas de Inferencia**: `tiene_jinete/1`, `sin_jinete/1`, `multiples_jinetes/1`, `jinetes_de/2`, `dragones_de_jinete/2`, `comparten_jinete/3`, `son_aliados/2`, `son_enemigos/2`, `bando_del_jinete/2` y `agregar_jinete/2`.
 
-2. **Gestión y Persistencia de Nuevos Jinetes**:
-   - Formulario en la interfaz para agregar nuevos jinetes a cualquier dragón.
-   - Aplica `assertz/1` en la memoria viva de Prolog y persiste los cambios automáticamente al final del archivo `dragones.pl` para conservarlos tras reiniciar la aplicación.
+2. **Arquitectura Java en 2 Clases**:
+   - **`ConectorProlog.java` (Conector JPL)**: Encargada exclusivamente de cargar `dragones.pl`, ejecutar consultas contra el motor SWI-Prolog, formatear soluciones, detectar el dragón consultado y persistir nuevos jinetes en disco.
+   - **`ConsultaDragones.java` (Vista / Controlador Swing)**: Ventana minimalista y comentada que integra la interfaz gráfica con el conector.
 
-3. **Interfaz Gráfica en Java Swing (`VentanaDragones`)**:
-   - **Panel Izquierdo**: Retrato oficial en alta definición para los dragones pertenecientes al plantel del juego *Game of Thrones: Dragonfire*. Para aquellos dragones que no formaban parte de dicho juego originalmente (como Balerion, Meraxes, Silverwing, Dreamfyre y Caníbal), el visor muestra limpiamente un estado `[Not found]` indicando que no cuentan con modelo original en el juego. Acompañado de la ficha resumen de atributos y jinetes.
-   - **Panel Superior Derecho**: Selector rápido de dragón, formulario para añadir jinetes, botones de consultas predefinidas (Los Negros, Los Verdes, Múltiples Jinetes, Salvajes, Comparador de Rivales/Aliados) y visor de resultados.
-   - **Panel Inferior Derecho**: Consola interactiva estilo terminal (`?- `) con autoscroll que permite ejecutar cualquier consulta Prolog libremente, mostrando todas las soluciones resueltas (`X = ...`), respuestas booleanas (`true.` / `false.`) y menú de ejemplos rápidos.
+3. **Interfaz Gráfica Didáctica (`ConsultaDragones`)**:
+   - **Lado Izquierdo**: Muestra **únicamente la imagen** del dragón seleccionado (retratos oficiales de *Game of Thrones: Dragonfire*, o `[Not found]` para Balerion, Meraxes, Caníbal, Silverwing y Dreamfyre).
+   - **Lado Derecho**:
+     - **Cabecera**: Nombre del dragón activo y selector desplegable para cambiarlo.
+     - **Banco de Preguntas**: Botones con preguntas frecuentes (jinetes, color y bando, origen, estado salvaje, aliados, enemigos, múltiples jinetes, sin jinete y añadir nuevo jinete). Al hacer clic en un botón, la consulta Prolog real se escribe en la consola y se ejecuta desde ahí.
+     - **Consola Interactiva (`?- `)**: Muestra las consultas generadas y sus respuestas, y permite escribir manualmente cualquier consulta Prolog para ver cómo responde y sincroniza la imagen en la vista.
 
 ---
 
@@ -31,14 +28,11 @@ Proyecto que integra **SWI-Prolog** con **Java (Swing)** mediante la librería *
 
 ```text
 prolog-java/
-├── dragones.pl                   # Base de conocimiento y reglas en Prolog
-├── images/                       # Retratos oficiales de los dragones del juego Dragonfire
+├── dragones.pl                   # Base de conocimientos documentada en Prolog
+├── images/                       # Retratos oficiales de los dragones de Dragonfire
 ├── src/
-│   ├── ConsultaDragones.java     # Punto de entrada principal (GUI o CLI)
-│   ├── VentanaDragones.java      # Interfaz gráfica de usuario en Swing
-│   ├── PanelImagenDragon.java    # Renderizado y escalado de imágenes
-│   ├── PrologService.java        # Controlador de conexión JPL, queries y persistencia
-│   └── DragonInfo.java           # Modelo de datos del dragón
+│   ├── ConectorProlog.java       # Clase conectora con SWI-Prolog (JPL)
+│   └── ConsultaDragones.java     # Clase Vista/Controlador en Java Swing
 ├── PLF.iml                       # Configuración de módulo para IntelliJ IDEA
 ├── .gitignore                    # Exclusiones de compilación (.class, out/, .idea/)
 └── README.md
@@ -50,7 +44,7 @@ prolog-java/
 
 - **Java JDK 17** o superior.
 - **SWI-Prolog** instalado (incluye `jpl.jar` y `jpl.dll`).
-  - Ruta típica en Windows: `C:\Program Files\swipl\bin` (debe estar en el `PATH` del sistema) y `C:\Program Files\swipl\lib\jpl.jar`.
+  - Ruta típica en Windows: `C:\Program Files\swipl\bin` (en el `PATH` del sistema) y `C:\Program Files\swipl\lib\jpl.jar`.
 
 ---
 
@@ -59,20 +53,15 @@ prolog-java/
 ### Desde IntelliJ IDEA:
 1. Abre el proyecto en IntelliJ.
 2. Asegúrate de tener referenciada la librería `jpl.jar` en las dependencias del módulo (`Project Structure -> Libraries`).
-3. Ejecuta la clase `ConsultaDragones` o `VentanaDragones`.
+3. Ejecuta la clase `ConsultaDragones`.
 
 ### Desde la Consola (PowerShell / Terminal):
 Compilación:
 ```powershell
-javac -encoding UTF-8 -cp "C:\Program Files\swipl\lib\jpl.jar" -d out src\*.java
+javac -encoding UTF-8 -cp "C:\Program Files\swipl\lib\jpl.jar" -d out src\ConectorProlog.java src\ConsultaDragones.java
 ```
 
-Ejecución (Modo Gráfico):
+Ejecución:
 ```powershell
 java -cp "out;C:\Program Files\swipl\lib\jpl.jar" ConsultaDragones
-```
-
-Ejecución (Modo Terminal CLI):
-```powershell
-java -cp "out;C:\Program Files\swipl\lib\jpl.jar" ConsultaDragones --cli
 ```

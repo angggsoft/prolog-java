@@ -1,7 +1,37 @@
-% ========================================================
-%  Base de Conocimiento: Dragones de House of the Dragon
-% ========================================================
+% ==============================================================================
+%  BASE DE CONOCIMIENTOS: DRAGONES DE HOUSE OF THE DRAGON (HotD)
+% ==============================================================================
+%
+%  GUÍA DIDÁCTICA DE PROLOG:
+%  -------------------------
+%  En Prolog (Programación Lógica), no escribimos "pasos a seguir" como en Java,
+%  sino que declaramos HECHOS (verdades conocidas) y REGLAS (relaciones lógicas).
+%
+%  Conceptos clave para leer este archivo:
+%  1. ÁTOMO: Es un valor constante o nombre propio. Siempre empieza en minúscula
+%     y usa guion bajo en lugar de espacios (ej. caraxes, aemond_targaryen).
+%  2. VARIABLE: Representa una incógnita que Prolog intentará resolver. Siempre
+%     empieza con MAYÚSCULA o con guion bajo '_' (ej. Dragon, X, Jinete).
+%     La variable '_' (anónima) significa "cualquier valor que no necesito guardar".
+%  3. HECHO: Una afirmación verdadera que termina con un punto '.'
+%     Ejemplo: dragon(vhagar).
+%  4. REGLA: Una conclusión que es verdadera SI se cumplen sus condiciones.
+%     Usa el símbolo ':-' que se lee como "SI..." o "SE CUMPLE CUANDO...".
+%  5. ARIDAD (nombre/N): Indica cuántos argumentos recibe un predicado.
+%     Por ejemplo, dragon/1 recibe 1 argumento; jinete/2 recibe 2 argumentos.
+% ==============================================================================
 
+
+% ==============================================================================
+%  SECCIÓN 1: DECLARACIÓN DE PREDICADOS DINÁMICOS (:- dynamic)
+% ==============================================================================
+%  Por defecto, en Prolog los hechos son estáticos (solo lectura en memoria).
+%  La directiva ':- dynamic nombre/aridad.' le indica al motor de Prolog que
+%  estos predicados pueden modificarse en tiempo de ejecución desde Java usando:
+%    - assertz(Hecho): Agrega un nuevo hecho al FINAL de la base en memoria.
+%    - asserta(Hecho): Agrega un nuevo hecho al INICIO de la base en memoria.
+%    - retract(Hecho): Elimina un hecho existente de la memoria.
+% ------------------------------------------------------------------------------
 :- dynamic dragon/1.
 :- dynamic jinete/2.
 :- dynamic bando/2.
@@ -9,7 +39,13 @@
 :- dynamic salvaje/1.
 :- dynamic nacido_en/2.
 
-% --- Hechos: Declaración de Dragones ---
+
+% ==============================================================================
+%  SECCIÓN 2: HECHOS - INVENTARIO DE DRAGONES (dragon/1)
+% ==============================================================================
+%  Predicado unario (aridad 1): dragon(NombreDragon).
+%  Declara que el átomo especificado es un dragón válido dentro del sistema.
+% ------------------------------------------------------------------------------
 dragon(balerion).
 dragon(meraxes).
 dragon(vhagar).
@@ -28,48 +64,47 @@ dragon(tessarion).
 dragon(canibal).
 dragon(robaovejas).
 
-% --- Hechos: Jinetes (Varios dragones han tenido múltiples jinetes) ---
 
-% Balerion el Terror Negro
+% ==============================================================================
+%  SECCIÓN 3: HECHOS - RELACIÓN DRAGÓN Y JINETE (jinete/2)
+% ==============================================================================
+%  Predicado binario (aridad 2): jinete(NombreDragon, NombreJinete).
+%  Representa una relación 1 a muchos (1:N): los dragones viven más que los
+%  humanos, por lo que un mismo dragón puede tener MÚLTIPLES hechos jinete/2
+%  a lo largo de distintas épocas. Cuando consultamos jinete(vhagar, J),
+%  Prolog hará "backtracking" (retroceso) para devolver todos los jinetes.
+% ------------------------------------------------------------------------------
+
 jinete(balerion, aegon_i_targaryen).
 jinete(balerion, maegor_i_targaryen).
 jinete(balerion, aerea_targaryen).
 jinete(balerion, viserys_i_targaryen).
 
-% Vhagar la Reina de la Muerte
 jinete(vhagar, visenya_targaryen).
 jinete(vhagar, baelon_targaryen).
 jinete(vhagar, laena_velaryon).
 jinete(vhagar, aemond_targaryen).
 
-% Meraxes
 jinete(meraxes, rhaenys_targaryen_conquistadora).
 
-% Caraxes el Anfíptero de Sangre
 jinete(caraxes, aemon_targaryen).
 jinete(caraxes, daemon_targaryen).
 
-% Meleys la Reina Roja
 jinete(meleys, alyssa_targaryen).
 jinete(meleys, rhaenys_targaryen).
 
-% Vermithor la Furia de Bronce
 jinete(vermithor, jaehaerys_i_targaryen).
 jinete(vermithor, hugh_hammer).
 
-% Silverwing Ala de Plata
 jinete(silverwing, alysanne_targaryen).
 jinete(silverwing, ulf_white).
 
-% Seasmoke Bruma Marina
 jinete(seasmoke, laenor_velaryon).
 jinete(seasmoke, addam_of_hull).
 
-% Dreamfyre Fuegoensueño
 jinete(dreamfyre, rhaena_targaryen).
 jinete(dreamfyre, helaena_targaryen).
 
-% Jinetes únicos en la Danza
 jinete(syrax, rhaenyra_targaryen).
 jinete(sunfyre, aegon_ii_targaryen).
 jinete(arrax, lucerys_velaryon).
@@ -78,14 +113,25 @@ jinete(moondancer, baela_targaryen).
 jinete(tessarion, daeron_targaryen).
 jinete(robaovejas, ortigas).
 
-% Caníbal no tiene jinete (completamente salvaje e indomable)
+% Nota didáctica: 'canibal' NO tiene ningún hecho jinete/2 porque es un dragón
+% completamente salvaje. En Prolog, lo que no está declarado o inferible se
+% asume falso ("Suposición de Mundo Cerrado" o Closed World Assumption).
 
-% --- Hechos: Bando en la Danza de Dragones ---
+
+% ==============================================================================
+%  SECCIÓN 4: HECHOS - BANDO EN LA DANZA DE DRAGONES (bando/2)
+% ==============================================================================
+%  Predicado binario: bando(NombreDragon, NombreBando).
+%  Asocia cada dragón con la facción política o época en la que luchó.
+% ------------------------------------------------------------------------------
+
+% Facción de Los Verdes (Rey Aegon II)
 bando(vhagar, verdes).
 bando(sunfyre, verdes).
 bando(dreamfyre, verdes).
 bando(tessarion, verdes).
 
+% Facción de Los Negros (Reina Rhaenyra)
 bando(caraxes, negros).
 bando(syrax, negros).
 bando(meleys, negros).
@@ -97,10 +143,17 @@ bando(vermax, negros).
 bando(moondancer, negros).
 bando(robaovejas, negros).
 
+% Época de la Conquista de Aegon (casi un siglo antes de la Danza)
 bando(balerion, aegon_el_conquistador).
 bando(meraxes, aegon_el_conquistador).
 
-% --- Hechos: Colores y Características distintivas ---
+
+% ==============================================================================
+%  SECCIÓN 5: HECHOS - COLOR CARACTERÍSTICO (color/2)
+% ==============================================================================
+%  Predicado binario: color(NombreDragon, Color).
+%  Define el rasgo visual principal de las escamas de cada dragón.
+% ------------------------------------------------------------------------------
 color(balerion, negro_ceniza).
 color(meraxes, gris_plateado).
 color(vhagar, bronce_y_verde).
@@ -119,11 +172,23 @@ color(tessarion, azul_cobalto).
 color(canibal, negro_carbon).
 color(robaovejas, marron_pardo).
 
-% --- Hechos: Dragones salvajes ---
+
+% ==============================================================================
+%  SECCIÓN 6: HECHOS - DRAGONES SALVAJES (salvaje/1)
+% ==============================================================================
+%  Predicado unario: salvaje(NombreDragon).
+%  Indica qué dragones crecieron en libertad sin vínculo inicial en Pozo Dragón.
+% ------------------------------------------------------------------------------
 salvaje(canibal).
 salvaje(robaovejas).
 
-% --- Hechos: Lugar de Nacimiento / Origen ---
+
+% ==============================================================================
+%  SECCIÓN 7: HECHOS - LUGAR DE NACIMIENTO U ORIGEN (nacido_en/2)
+% ==============================================================================
+%  Predicado binario: nacido_en(NombreDragon, Lugar).
+%  Registra dónde eclosionó el huevo de cada dragón.
+% ------------------------------------------------------------------------------
 nacido_en(balerion, valyria).
 nacido_en(vhagar, dragonstone).
 nacido_en(meraxes, dragonstone).
@@ -142,59 +207,100 @@ nacido_en(vermax, dragonstone).
 nacido_en(moondancer, dragonstone).
 nacido_en(tessarion, dragonstone).
 
-% ========================================================
-%  Reglas (Lógica e Inferencia)
-% ========================================================
 
-% Un dragón tiene jinete si existe al menos un registro
+% ==============================================================================
+%  SECCIÓN 8: REGLAS DE INFERENCIA LÓGICA
+% ==============================================================================
+%  Aquí el sistema experto "razona" combinando hechos para deducir respuestas
+%  nuevas que no están escritas explícitamente como datos simples.
+%
+%  Operadores lógicos utilizados:
+%    ','  -> Y lógico (conjunción): ambas condiciones deben cumplirse.
+%    ';'  -> O lógico (disyunción): basta con que se cumpla una condición.
+%    '\+' -> Negación por fallo (NOT): verdadero si Prolog NO logra probar la meta.
+%    '\=' -> Desigualdad: verdadero si los dos términos son distintos.
+% ------------------------------------------------------------------------------
+
+% --- Regla 1: tiene_jinete/1 ---
+% Un dragón tiene jinete SI existe al menos un hecho jinete(Dragon, _).
+% Usamos '_' porque en esta regla no nos importa el nombre del jinete, solo si existe.
 tiene_jinete(Dragon) :-
     jinete(Dragon, _).
 
-% Un dragón no tiene jinete si es salvaje o no tiene jinete registrado
+% --- Regla 2: sin_jinete/1 ---
+% Un dragón no tiene jinete SI es un dragón válido Y NO se cumple tiene_jinete(Dragon).
+% Nota: Es fundamental poner primero 'dragon(Dragon)' para instanciar la variable
+% Dragon antes de evaluar la negación '\+'.
 sin_jinete(Dragon) :-
     dragon(Dragon),
     \+ tiene_jinete(Dragon).
 
-% Dragones que han tenido múltiples jinetes a lo largo de su historia
+% --- Regla 3: multiples_jinetes/1 ---
+% Un dragón ha tenido múltiples jinetes SI:
+%   1) Es un dragón válido: dragon(Dragon)
+%   2) Recolectamos en la lista 'Jinetes' todos los J tales que jinete(Dragon, J)
+%      usando el predicado predefinido findall(Plantilla, Meta, ListaResultado).
+%   3) Calculamos la longitud 'N' de esa lista con length(Lista, Longitud).
+%   4) Verificamos aritméticamente que N > 1.
 multiples_jinetes(Dragon) :-
     dragon(Dragon),
     findall(J, jinete(Dragon, J), Jinetes),
     length(Jinetes, N),
     N > 1.
 
-% Obtener todos los jinetes de un dragón como lista
+% --- Regla 4: jinetes_de/2 ---
+% Devuelve en el segundo argumento una lista con todos los jinetes de un dragón.
+% Ejemplo de consulta: ?- jinetes_de(vhagar, Lista).
 jinetes_de(Dragon, Jinetes) :-
     dragon(Dragon),
     findall(J, jinete(Dragon, J), Jinetes).
 
-% Obtener todos los dragones que ha montado un jinete
+% --- Regla 5: dragones_de_jinete/2 ---
+% Devuelve en una lista todos los dragones que ha montado un mismo jinete.
+% Ejemplo de consulta: ?- dragones_de_jinete(aemond_targaryen, Lista).
 dragones_de_jinete(Jinete, Dragones) :-
     findall(D, jinete(D, Jinete), Dragones).
 
-% Dos dragones compartieron jinete si el mismo jinete los montó a ambos
+% --- Regla 6: comparten_jinete/3 ---
+% Dos dragones (Dragon1 y Dragon2) compartieron jinete SI:
+%   1) El mismo Jinete montó a Dragon1, Y
+%   2) Ese mismo Jinete montó a Dragon2, Y
+%   3) Dragon1 y Dragon2 son dragones diferentes (Dragon1 \= Dragon2).
 comparten_jinete(Dragon1, Dragon2, Jinete) :-
     jinete(Dragon1, Jinete),
     jinete(Dragon2, Jinete),
     Dragon1 \= Dragon2.
 
-% Dos dragones son aliados si pertenecen al mismo bando y no son el mismo dragón
+% --- Regla 7: son_aliados/2 ---
+% Dos dragones son aliados SI pertenecen exactamente al mismo Bando
+% Y no se está comparando el dragón consigo mismo (Dragon1 \= Dragon2).
 son_aliados(Dragon1, Dragon2) :-
     bando(Dragon1, Bando),
     bando(Dragon2, Bando),
     Dragon1 \= Dragon2.
 
-% Dos dragones son enemigos / rivales si pertenecen a bandos contrarios
+% --- Regla 8: son_enemigos/2 ---
+% Dos dragones son enemigos / rivales SI:
+%   1) Dragon1 pertenece a Bando1, Y
+%   2) Dragon2 pertenece a Bando2, Y
+%   3) Sus bandos son diferentes (Bando1 \= Bando2).
 son_enemigos(Dragon1, Dragon2) :-
     bando(Dragon1, Bando1),
     bando(Dragon2, Bando2),
     Bando1 \= Bando2.
 
-% Obtener el bando a través del jinete
+% --- Regla 9: bando_del_jinete/2 ---
+% Regla transitiva: deduce el bando de un jinete buscando qué dragón monta
+% y consultando el bando de ese dragón.
 bando_del_jinete(Jinete, Bando) :-
     jinete(Dragon, Jinete),
     bando(Dragon, Bando).
 
-% Regla para registrar dinámicamente un nuevo jinete
+% --- Regla 10: agregar_jinete/2 (Modificación dinámica en memoria) ---
+% Permite registrar un nuevo jinete para un dragón evitando duplicados.
+% Usa la estructura condicional de Prolog: ( Condición -> Si_Es_Verdad ; Si_No ).
+%   1) Si dragon(Dragon) ya existe, no hace nada (true); si no, lo inserta con assertz.
+%   2) Si jinete(Dragon, Jinete) ya existe, no lo duplica; si no, lo inserta con assertz.
 agregar_jinete(Dragon, Jinete) :-
     (   dragon(Dragon) -> true ; assertz(dragon(Dragon)) ),
     (   jinete(Dragon, Jinete) -> true ; assertz(jinete(Dragon, Jinete)) ).
