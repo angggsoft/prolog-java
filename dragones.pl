@@ -372,3 +372,24 @@ dragones_con_jinete_por_bando(Bando, Dragones) :-
         Dragones
     ).
 
+% Reglas de Leonardo Mariaud
+% --- Regla: dragon_de_la_danza/1 ---
+% Un dragón peleó en la Danza de Dragones SI es de los verdes O de los negros.
+% Usa ';' (O lógico): basta con que se cumpla una de las dos condiciones.
+dragon_de_la_danza(Dragon) :-
+    bando(Dragon, verdes) ;
+    bando(Dragon, negros).
+
+% --- Regla: enemigos_en_la_danza/2 ---
+% Dos dragones son enemigos en la Danza SI son enemigos Y ambos pelearon en la Danza.
+% Reutiliza dos reglas: son_enemigos/2 y dragon_de_la_danza/1.
+enemigos_en_la_danza(Dragon1, Dragon2) :-
+    son_enemigos(Dragon1, Dragon2),
+    dragon_de_la_danza(Dragon1),
+    dragon_de_la_danza(Dragon2).
+
+% --- Regla: eliminar_jinete/2 ---
+% Borra de la memoria el hecho jinete(Dragon, Jinete). Es lo contrario de agregar_jinete/2.
+% Funciona porque jinete/2 está declarado como dynamic.
+eliminar_jinete(Dragon, Jinete) :-
+    retract(jinete(Dragon, Jinete)).
