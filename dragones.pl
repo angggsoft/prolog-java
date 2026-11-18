@@ -330,3 +330,45 @@ dragon_libre(Dragon) :-
 dragon_domado(Dragon) :-
     salvaje(Dragon),
     tiene_jinete(Dragon).
+
+
+
+
+
+
+  
+% Ejemplo de Carlos Josue
+% --- Regla adicional 1: dragones_por_color/2 ---
+% Devuelve una lista con todos los dragones que tienen un color específico.
+%
+% 1. Recibe un color.
+% 2. Busca los dragones que tienen ese color.
+% 3. Utiliza findall para reunirlos en una lista.
+
+dragones_por_color(Color, Dragones) :-
+    findall(D, color(D, Color), Dragones).
+% --- Regla adicional 2: dragones_por_origen/2 ---
+% Devuelve una lista con todos los dragones que nacieron
+% en un lugar específico.
+%
+% 1. Recibe un lugar de nacimiento.
+% 2. Busca los dragones asociados a ese lugar.
+% 3. Utiliza findall para reunir los resultados.
+
+dragones_por_origen(Lugar, Dragones) :-
+    findall(D, nacido_en(D, Lugar), Dragones).
+% --- Regla adicional 3: dragones_con_jinete_por_bando/2 ---
+% Devuelve una lista de dragones pertenecientes a un bando
+% que tienen al menos un jinete registrado.
+%
+% 1. Busca los dragones pertenecientes al bando solicitado.
+% 2. Comprueba que cada dragón tenga al menos un jinete.
+% 3. Reúne todos los resultados mediante findall.
+
+dragones_con_jinete_por_bando(Bando, Dragones) :-
+    findall(
+        D,
+        (bando(D, Bando), tiene_jinete(D)),
+        Dragones
+    ).
+
