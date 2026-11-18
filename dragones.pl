@@ -304,3 +304,29 @@ bando_del_jinete(Jinete, Bando) :-
 agregar_jinete(Dragon, Jinete) :-
     (   dragon(Dragon) -> true ; assertz(dragon(Dragon)) ),
     (   jinete(Dragon, Jinete) -> true ; assertz(jinete(Dragon, Jinete)) ).
+
+%Reglas de Carlos Mota
+% --- Regla 11: dragones_del_bando/2 ---
+% Devuelve en una lista todos los dragones que pertenecen a un bando.
+% Usa findall(Plantilla, Meta, Lista) para recolectar cada D tal que bando(D, Bando).
+% Importante: hay que consultarla con un bando concreto (verdes, negros, etc.).
+% Ejemplo de consulta: ?- dragones_del_bando(negros, Lista).
+dragones_del_bando(Bando, Dragones) :-
+    findall(D, bando(D, Bando), Dragones).
+
+% --- Regla 12: dragon_libre/1 ---
+% Un dragón es libre SI es salvaje Y además no tiene ningún jinete registrado.
+% Combina un hecho (salvaje/1) con una regla (sin_jinete/1), que a su vez usa
+% negación por fallo (\+).
+% Ejemplo de consulta: ?- dragon_libre(D).
+dragon_libre(Dragon) :-
+    salvaje(Dragon),
+    sin_jinete(Dragon).
+
+% --- Regla 13: dragon_domado/1 ---
+% Un dragón fue domado SI nació salvaje Y ya tiene al menos un jinete.
+% Es lo contrario de dragon_libre/1: aquí usamos tiene_jinete/1 en lugar de sin_jinete/1.
+% Ejemplo de consulta: ?- dragon_domado(D).
+dragon_domado(Dragon) :-
+    salvaje(Dragon),
+    tiene_jinete(Dragon).
